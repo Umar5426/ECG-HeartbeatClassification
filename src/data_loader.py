@@ -3,46 +3,33 @@
 import wfdb
 import numpy as np
 from typing import Tuple, List
+import os
 
-def load_record(record_name: str, db: str = "mitdb"):
-    """
-    Load an ECG record and its annotations from PhysioNet using WFDB.
-    
-    Parameters:
-        record_name (str): Example = '100', '101', ...
-        db (str): PhysioNet database name (default = 'mitdb')
-    
-    Returns:
-        signal (np.ndarray): Shape (N, channels)
-        annotation (wfdb.Annotation)
-    """
-    # Load ECG signal
-    record = wfdb.rdrecord(record_name, pn_dir=db)
-    
-    # Load annotations (R-peaks + beat types)
-    annotation = wfdb.rdann(record_name, 'atr', pn_dir=db)
+DATA_PATH = "/Users/umarkhan/Desktop/ECG-HeartbeatClassification/data/physionet.org/files/mitdb/1.0.0/"
 
-    signal = record.p_signal  # float values
-    fs = record.fs            # sampling frequency = 360 Hz
+def load_record(record_name: str, db_path: str = DATA_PATH):
+
+    record_path = os.path.join(db_path, record_name)
+
+    record = wfdb.rdrecord(record_path)
+    annotation = wfdb.rdann(record_path, 'atr')
+
+    signal = record.p_signal
+    fs = record.fs
 
     return signal, annotation, fs
 
 
-def load_multiple_records(record_list: List[str], db: str = "mitdb"):
-    """
-    Load multiple MIT-BIH records.
-    Returns list of tuples: (signal, annotation, fs)
-    """
+def load_multiple_records(record_list: List[str], db_path: str = DATA_PATH):
     data = []
     for rec in record_list:
         print(f"Loading record {rec}...")
-        sig, ann, fs = load_record(rec, db)
+        sig, ann, fs = load_record(rec, db_path)
         data.append((sig, ann, fs))
     return data
 
 
 if __name__ == "__main__":
-    # Test loading a single record
     signal, ann, fs = load_record("100")
     print("Signal shape:", signal.shape)
     print("Sampling rate:", fs)
