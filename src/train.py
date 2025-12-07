@@ -18,8 +18,8 @@ from utils import (
     collate_lstm,
     save_checkpoint
 )
-from model.cnn import Simple1DCNN
-from model.lstm import SimpleLSTM
+from src.models.cnn import Simple1DCNN
+from src.models.lstm import SimpleLSTM
 
 # training hyperparams
 BATCH_SIZE = 128
